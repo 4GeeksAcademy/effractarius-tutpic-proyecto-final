@@ -1,11 +1,13 @@
 import React, { useEffect } from "react"
 import rigoImageUrl from "../assets/img/rigo-baby.jpg";
+import cookLogoImageUrl from "../assets/img/chef-hat.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
 
 	const { store, dispatch } = useGlobalReducer()
-
+	const navigate = useNavigate()
 	const loadMessage = async () => {
 		try {
 			const backendUrl = import.meta.env.VITE_BACKEND_URL
@@ -34,10 +36,13 @@ export const Home = () => {
 
 	return (
 		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
+			<h1 className="display-4">Let's Cook</h1>
 			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
+				<img src={cookLogoImageUrl} className="rounded-circle mb-1 w-25" alt="chef-logo" />
 			</p>
+
+			<button className="btn btn-warning" onClick={() => navigate("/registro")}>Ir a Registro</button>
+			
 			<div className="alert alert-info">
 				{store.message ? (
 					<span>{store.message}</span>

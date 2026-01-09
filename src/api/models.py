@@ -44,7 +44,7 @@ class Receta(db.Model):
     __tablename__ = "recetas"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     date: Mapped[object] = mapped_column(Time(), nullable=False)
     descripcion: Mapped[str] = mapped_column(String(), nullable=False)
     ingredientes: Mapped[str] = mapped_column(String(), nullable=False)
@@ -62,7 +62,7 @@ class Receta(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
+            "username": self.username,
             "date": str(self.date),
             "descripcion": self.descripcion,
             "ingredientes": self.ingredientes,

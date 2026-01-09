@@ -6,22 +6,25 @@ import { useNavigate, useLocation } from "react-router-dom";
 export const Home = () => {
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ get state from navigation
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const loadMessage = async () => {
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
       if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file");
 
-      const response = await fetch(backendUrl + "/api/hello");
+      const response = await fetch(`${backendUrl}/api/hello`);
       const data = await response.json();
 
       if (response.ok) {
         dispatch({ type: "set_hello", payload: data.message });
+      } else {
+        setError("Failed to load message from backend.");
       }
-    } catch (error) {
-      console.error("Could not fetch the message from the backend.");
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -37,27 +40,30 @@ export const Home = () => {
     <div className="text-center mt-5">
       <h1 className="display-4">Bienvenido</h1>
       <p className="lead">
-        <img src={logoImageUrl} className="w-25 square-img" alt="Logo" />
+        <img src={logoImageUrl} className="w-25 square-img" alt="Effractarius Logo" />
       </p>
-
-      <button className="btn btn-warning" onClick={() => navigate("/registro")}>
-        Ir a Registro
-      </button>
-      <br /><br />
-      <button className="btn btn-warning" onClick={() => navigate("/login")}>
-        Ir a Login
-      </button>
-      <br /><br />
-      {token && (
-        <button className="btn btn-warning" onClick={() => navigate("/dashboard")}>
-          Ir a Dashboard
+      <div className="d-flex justify-content-center gap-3 mt-3">
+        <button className="btn btn-warning" onClick={() => navigate("/register")}>
+          Ir a Registro
         </button>
-      )}
-
-      {/* ✅ Show logout message if passed via state */}
+        <button className="btn btn-warning" onClick={() => navigate("/login")}>
+          Ir a Login
+        </button>
+        {token && (
+          <button className="btn btn-warning" onClick={() => navigate("/dashboard")}>
+            Ir a Dashboard
+          </button>
+        )}
+      </div>
       {location.state?.message && (
         <div className="alert alert-success mt-3">
           {location.state.message}
+        </div>
+      )}
+
+      {error && (
+        <div className="alert alert-danger mt-3">
+          {error}
         </div>
       )}
 

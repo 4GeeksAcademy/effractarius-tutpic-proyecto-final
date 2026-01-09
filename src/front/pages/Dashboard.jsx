@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Logout from "../components/Logout.jsx";
+import LogoutButton from "../components/LogoutButton.jsx";
 
 const Dashboard = () => {
   const [user, setUser] = useState({}); // start with empty object
@@ -8,7 +9,7 @@ const Dashboard = () => {
     const getRestricted = async () => {
       try {
         const response = await fetch(
-          "https://turbo-space-trout-5gpx5v4q5qqv2p4gv-3000.app.github.dev/api/restringido",
+          "https://turbo-space-trout-5gpx5v4q5qqv2p4gv-3001.app.github.dev/api/restringido",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -32,11 +33,15 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="text-center mt-5">
+    <div className="container mt-5 text-center">
       <h1 className="display-4">Dashboard</h1>
-      <h2>{user?.name}</h2> {/* safe optional chaining */}
-      <Logout />
-      <p className="lead">Aquí puedes ver tu dashboard.</p>
+      <h2>{user?.username}</h2> {/* safe optional chaining */}
+      <p className="lead">Bienvenido al área privada.</p>
+
+      {/* You can choose one logout component */}
+      <LogoutButton />
+      {/* or */}
+      {/* <Logout /> */}
     </div>
   );
 };

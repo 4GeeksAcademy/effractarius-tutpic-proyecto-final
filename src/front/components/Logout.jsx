@@ -5,16 +5,16 @@ const Logout = () => {
   const navigate = useNavigate();
 
   const handlerLogout = () => {
-    localStorage.removeItem("access_token");
-    navigate("/", { state: { message: "Sesión terminada correctamente ✅" } });
+    if (window.confirm("¿Seguro que quieres cerrar sesión?")) {
+      localStorage.removeItem("access_token");
+      navigate("/", { state: { message: "Sesión terminada correctamente ✅" } });
+    }
   };
 
   return (
-    <div>
-      <button className="btn btn-danger" onClick={handlerLogout}>
-        Logout
-      </button>
-    </div>
+    <button className="btn btn-outline-danger" onClick={handlerLogout}>
+      Logout
+    </button>
   );
 };
 

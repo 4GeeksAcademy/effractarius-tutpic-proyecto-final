@@ -5,7 +5,7 @@ import { Layout } from "./pages/Layout.jsx";
 import { Home } from "./pages/Home.jsx";
 import { Single } from "./pages/Single.jsx";
 import { Demo } from "./pages/Demo.jsx";
-import Registro from "./pages/Registro.jsx";
+import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
@@ -23,7 +23,7 @@ export const router = createBrowserRouter(
       {/* Index route: renders Home at "/" */}
       <Route index element={<Home />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/registro" element={<Registro />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/single/:theId" element={<Single />} /> {/* Dynamic route */}

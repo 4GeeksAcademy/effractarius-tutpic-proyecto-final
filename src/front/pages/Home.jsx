@@ -41,7 +41,11 @@ export const Home = () => {
 				<img src={logoImageUrl} className="w-25 square-img" alt="Logo" />
 			</p>
 
-				<button className="btn btn-warning" onClick ={() => navigate("/Registro")}>Ir a Registro</button>
+				<button className="btn btn-warning" onClick ={() => navigate("/registro")}>Ir a Registro</button>
+				<br /><br />
+				<button className="btn btn-warning" onClick ={() => navigate("/login")}>Ir a Login</button>
+				<br /><br />
+				<button className="btn btn-warning" onClick ={() => navigate("/dashboard")}>Ir a Dashboard</button>
 
 			<div className="alert alert-info">
 				{store.message ? (
@@ -55,3 +59,5 @@ export const Home = () => {
 		</div>
 	);
 }; 
+
+export default Home;

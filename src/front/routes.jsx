@@ -1,11 +1,14 @@
 // Import necessary components and functions from react-router-dom.
 
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
-import { Layout } from "./pages/Layout";
-import { Home } from "./pages/Home";
-import { Single } from "./pages/Single";
-import { Demo } from "./pages/Demo";
-import Registro from "./pages/Registro";
+import { Layout } from "./pages/Layout.jsx";
+import { Home } from "./pages/Home.jsx";
+import { Single } from "./pages/Single.jsx";
+import { Demo } from "./pages/Demo.jsx";
+import Registro from "./pages/Registro.jsx";
+import Login from "./pages/Login.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -16,14 +19,15 @@ export const router = createBrowserRouter(
     // Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
 
       // Root Route: All navigation will start from here.
-      <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
-
-        {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
-        <Route path= "/" element={<Home />} />
-        <Route path="/home" element={ <Home />} />
-        <Route path="/registro" element={<Registro />} />
-        <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
-        <Route path="/demo" element={<Demo />} />
-      </Route>
-    )
+      <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
+      {/* Index route: renders Home at "/" */}
+      <Route index element={<Home />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/registro" element={<Registro />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/single/:theId" element={<Single />} /> {/* Dynamic route */}
+      <Route path="/demo" element={<Demo />} />
+    </Route>
+  )
 );

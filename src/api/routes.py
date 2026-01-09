@@ -92,3 +92,16 @@ def create_user():
     access_token = create_access_token(
         identity=str(User_id), expires_delta=expires)
     return jsonify({"access_token": access_token}), 200
+
+@api.route('/restringido')
+@jwt_required()
+def restringido():
+    current_user_id = get_jwt_identity()
+    if not current_user_id:
+        return jsonify({"error": "Usuario no autenticado"}), 401
+
+    user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    return jsonify({"user": user.serialize()}), 200

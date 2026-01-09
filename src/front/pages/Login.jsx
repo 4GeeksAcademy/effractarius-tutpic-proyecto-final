@@ -1,7 +1,9 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    let navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -16,6 +18,8 @@ const Login = () => {
             if (data) {
                 alert("Login exitoso");
                 console.log("Usuario logueado:", data.access_token);
+                localStorage.setItem("access_token", data.access_token);
+                navigate ("/dashboard");
             } else {
                 alert("Error al iniciar sesión");
             }

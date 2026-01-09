@@ -22,7 +22,7 @@ export const Demo = () => {
               
               <p>Open file ./store.js to see the global store that contains and updates the list of colors</p>
               
-              <button className="btn btn-success" 
+              <button className="btn btn-warning" 
                 onClick={() => dispatch({
                   type: "add_task", 
                   payload: { id: item.id, color: '#ffa500' }
@@ -36,7 +36,7 @@ export const Demo = () => {
       <br />
 
       <Link to="/">
-        <button className="btn btn-primary">Back home</button>
+        <button className="btn btn-warning">Back home</button>
       </Link>
     </div>
   );

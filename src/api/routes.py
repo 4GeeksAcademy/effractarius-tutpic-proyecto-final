@@ -6,99 +6,89 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+from datetime import timedelta
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
 bcrypt = Bcrypt()
+jwt = JWTManager()
 
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
 
     response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+        "message": "Hola!! Soy un mensaje del backend, Revisa la pestaña de red en el inspector de Google y verás la solicitud GET"
     }
 
     return jsonify(response_body), 200
 
-
-passhash = bcrypt.generate_password_hash("password").decode('utf-8')
+# Recuperar Data de Usuario
 
 
 @api.route('/create_user', methods=['POST'])
 def create_user():
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "No input data provided"}), 400
 
-# Recuperar la Variable
+    # Hashear la contraseña
+    passhash = bcrypt.generate_password_hash(
+        request.json['password']).decode('utf-8')
 
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
-    is_premium = data.get('is_premium', False)
-    is_admin = data.get('is_admin', False)
+    try:
+        data = request.get_json()
+        username = data.get("username")
+        email = data.get("email")
+        password = data.get("password")
+        is_admin = data.get("is_admin")
+        is_premium = data.get("is_premium")
+        is_active = data.get("is_active")
 
-# Verificar que vengan los datos obligatorios
+# Verificar que los campos obligatorios no estén vacíos
+        if not email or not password:
+            return jsonify({"error": "Email & password son necesarios"}), 400
 
-    if not username or not email or not password:
-        return jsonify({"message": "Missing required fields"}), 400
+# Verificar que el usuario no exista
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            return jsonify({"error": "El usuario ya existe"}), 409
 
-# Verificar que no exista un usuario con el mismo username o email
+# Crear nuevo usuario
+        user = User(username=username, email=email, password=passhash,
+                    is_admin=is_admin, is_premium=is_premium, is_active=is_active)
+        db.session.add(user)
+        db.session.commit()
 
-    existing_user = User.query.filter(
-        (User.email == email) | (User.username == username)
-    ).first()
+        return jsonify({"message": "User created successfully", "nuevo_usuario": user.serialize()}), 201
 
-# Si existe, retornar un error
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
-    if existing_user:
-        return jsonify({"message": "User with this email or username already exists"}), 409
+    @api.route('/login', methods=['[POST'])
+    def login():
 
-# Crear el usuario
+        # Obtener datos del request
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Falta data"}), 400
+        email = data.get("email")
+        password = data.get("password")
+        if not email or not password:
+            return jsonify({"message": "No Data"}), 400
 
-    new_user = User(
-        username=username,
-        email=email,
-        password=password,
-        is_admin=is_admin,
-        is_premium=is_premium,
-        is_active=True
-    )
+# Verificar que el usuario exista
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        hashed_password = user.password
+        password_match = bcrypt.check_password_hash(hashed_password, password)
+        if not password_match:
+            return jsonify({"error": "Contraseña incorrecta"}), 401
+        expires = timedelta(minutes=30)
 
-# Guardar el usuario en la base de datos
-
-    db.session.add(new_user)
-
-# Commitiar los cambios
-
-    db.session.commit()
-
-# Retornar el usuario creado
-
-    return jsonify({"message": "User created successfully", "user": new_user.serialize()}), 201
-
-
-@api.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "No input data provided"}), 400
-    
-    email = data.get("email")
-    username = data.get('username')
-    password = data.get('password')
-
-    if not email or not username or not password:
-        return jsonify({"message": "Missing required fields"}), 400
-
-# Buscar el usuario por email o username
-
-    user = User.query.filter_by(email=email).first()
-
-    if not user or not bcrypt.check_password_hash(user.password, password):
-        return jsonify({"message": "Invalid email or password"}), 401
-
-    return jsonify({"message": "Login successful", "user": user.serialize()}), 200
+    User_id = user.id
+    access_token = create_access_token(
+        identity=str(User_id), expires_delta=expires)
+    return jsonify({"access_token": access_token}), 200

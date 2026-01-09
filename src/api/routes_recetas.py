@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, Receta, User
-from datetime import datetime
+import datetime
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 

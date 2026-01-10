@@ -4,6 +4,9 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export const Home = () => {
+  useEffect(() => {
+    document.title = "Home | Let's Cook!";
+  }, []);
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const location = useLocation();

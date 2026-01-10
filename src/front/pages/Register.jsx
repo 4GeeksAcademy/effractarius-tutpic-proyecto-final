@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Register = () => {
+  useEffect(() => {
+      document.title = "Register | Let's Cook!";
+    }, []);
   const [username, setUsername] = useState(""); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,12 +18,12 @@ const Register = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password }), // ✅ aligned with backend
+          body: JSON.stringify({ "username": username, "email": email, "password": password }), // ✅ aligned with backend
         }
       );
 
       const data = await response.json();
-
+      console.log("Data", data);
       if (response.ok) {
         alert("Usuario creado exitosamente ✅");
         setUsername("");

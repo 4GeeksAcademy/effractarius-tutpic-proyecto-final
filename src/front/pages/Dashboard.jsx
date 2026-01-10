@@ -3,9 +3,13 @@ import Logout from "../components/Logout.jsx";
 import LogoutButton from "../components/LogoutButton.jsx";
 
 const Dashboard = () => {
+  useEffect(() => {
+      document.title = "Dashboard | Let's Cook!";
+    }, []);
   const [user, setUser] = useState({}); // start with empty object
 
   useEffect(() => {
+    
     const getRestricted = async () => {
       try {
         const response = await fetch(

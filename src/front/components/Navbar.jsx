@@ -5,17 +5,17 @@ export const Navbar = () => {
 
 	return (
 		<nav className="navbar navbar-light bg-light">
+
 			<div className="container">
 				<Link to="/">
-					<span className="navbar-brand mb-0 h1">Ir a HOME</span>
+					<button className="btn btn-warning" onClick={() => navigate("/")}><p className="lead">
+						<img
+							src={logoTwoImageUrl}
+							alt="Logo"
+							style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "50%" }}
+						/>
+					</p>Ir a HOME</button>
 				</Link>
-				<p className="lead">
-					<img
-						src={logoTwoImageUrl}
-						alt="Logo"
-						style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "50%" }}
-					/>
-				</p>
 
 				<div className="ml-auto">
 					<Link to="/demo">

@@ -49,7 +49,7 @@ class Receta(db.Model):
     descripcion: Mapped[str] = mapped_column(String(), nullable=False)
     ingredientes: Mapped[str] = mapped_column(String(), nullable=False)
     instrucciones: Mapped[str] = mapped_column(String(), nullable=False)
-    foto_url: Mapped[str] = mapped_column(String())
+    foto_url: Mapped[str] = mapped_column(String(),nullable=True)
 
     favorites: Mapped[List["User"]] = relationship(
         secondary=favoritos, back_populates="favorites")
@@ -60,16 +60,22 @@ class Receta(db.Model):
     tags: Mapped["TagList"] = relationship(back_populates="receta")
 
     def serialize(self):
+        if not self.tags:
+            tags = []
+        else:
+            tags = self.tags.serialize()
         return {
             "id": self.id,
             "username": self.username,
             "date": str(self.date),
+            "name": self.name,
+            "date": self.date.strftime("%c"),
             "descripcion": self.descripcion,
             "ingredientes": self.ingredientes,
             "instrucciones": self.instrucciones,
             "foto_url": self.foto_url,
             "autor": self.autor.serialize(),
-            "tags": self.tags.serialize()
+            "tags": tags
         }
 
 class TagList(db.Model):

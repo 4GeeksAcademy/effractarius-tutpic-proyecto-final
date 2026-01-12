@@ -12,6 +12,10 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from api.routes_recetas import recetas
+from api.routes_tags import tags
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 # from models import Person
 
@@ -23,6 +27,8 @@ app.url_map.strict_slashes = False
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+jwt = JWTManager(app)
+bcrypt = Bcrypt(app)
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -44,7 +50,8 @@ setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
-
+app.register_blueprint(recetas, url_prefix='/recetas')
+app.register_blueprint(tags, url_prefix='/tags')
 # Handle/serialize errors like a JSON object
 
 

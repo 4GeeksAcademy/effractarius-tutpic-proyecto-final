@@ -10,6 +10,9 @@ from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from api.routes_recetas import recetas
+from api.routes_tags import tags
+
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 
@@ -44,6 +47,24 @@ setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(recetas, url_prefix='/recetas')
+app.register_blueprint(tags, url_prefix='/tags')
+
+from api.routes_favoritos import favoritos_bp
+from api.routes_usuarios import usuarios_bp
+from api.routes_blog import blog_bp
+from api.routes_comentarios import comentarios_bp
+from api.routes_productos import productos_bp
+from api.routes_carrito import carrito_bp
+from api.routes_ordenes import ordenes_bp
+
+app.register_blueprint(favoritos_bp, url_prefix='/api/favoritos')
+app.register_blueprint(usuarios_bp, url_prefix='/api/usuarios')
+app.register_blueprint(blog_bp, url_prefix='/api/blog')
+app.register_blueprint(comentarios_bp, url_prefix='/api/comentarios')
+app.register_blueprint(productos_bp, url_prefix='/api/productos')
+app.register_blueprint(carrito_bp, url_prefix='/api/carrito')
+app.register_blueprint(ordenes_bp, url_prefix='/api/ordenes')
 
 # Handle/serialize errors like a JSON object
 

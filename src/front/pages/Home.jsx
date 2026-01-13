@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import logoImageUrl from "../assets/img/11.png";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
+import CardReceta from "../components/CardReceta.jsx";
 
 export const Home = () => {
   const { store, dispatch } = useGlobalReducer();
@@ -9,10 +10,12 @@ export const Home = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lista,setLista] = useState([])
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const loadMessage = async () => {
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      
       if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file");
 
       const response = await fetch(`${backendUrl}/api/hello`);
@@ -30,6 +33,22 @@ export const Home = () => {
     }
   };
 
+  useEffect(()=>{
+    const getRecetas = async () => {
+      try {
+        var response = await fetch(`${backendUrl}recetas/lista`)
+        if(!response.ok){
+          throw new Error("error fetch lista recetas")
+        }
+        var data = await response.json()
+        setLista(data.recetas)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getRecetas()
+  },[])
+
   useEffect(() => {
     loadMessage();
   }, []);
@@ -37,11 +56,18 @@ export const Home = () => {
   const token = localStorage.getItem("access_token");
 
   return (
-    <div className="text-center mt-5">
+    <div className="text-center mt-5 bg-warning-subtle">
       <h1 className="display-4">Bienvenido</h1>
       <p className="lead">
         <img src={logoImageUrl} className="w-25 square-img" alt="Effractarius Logo" />
       </p>
+      <div className="d-flex flex-row justify-content-around flex-wrap bg-warning p-2">
+        {lista.length > 0 && lista.map((ele)=>{
+          return(
+            <CardReceta key={ele.id} receta_id={ele.id} name={ele.name} desc={ele.descripcion} img={ele.foto_url}></CardReceta>
+          )
+        })}
+      </div>
       <div className="d-flex justify-content-center gap-3 mt-3">
         <button className="btn btn-warning" onClick={() => navigate("/register")}>
           Ir a Registro

@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import AuthForm from "./AuthForm";
 
 const Login = () => {
+  useEffect(() => {
+    document.title = "Iniciar Sesión | Let's Cook!";
+  }, []);
+
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -17,15 +18,15 @@ const Login = () => {
     }
   }, [navigate]);
 
-  const handlerLogin = async () => {
+  const handleLogin = async ({ email, password }) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await fetch(
-        "https://turbo-space-trout-5gpx5v4q5qqv2p4gv-3001.app.github.dev/api/login",
+        `${import.meta.env.VITE_BACKEND_URL}/api/login`,
         {
           method: "POST",
-          body: JSON.stringify({ email, password }),
           headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
         }
       );
 
@@ -33,71 +34,44 @@ const Login = () => {
 
       if (response.ok) {
         localStorage.setItem("access_token", data.access_token);
-        navigate("/dashboard", { state: { message: "Login exitoso ✅" } });
+        navigate("/dashboard", { state: { message: "Sesión iniciada exitosamente" } });
       } else {
-        setError(data.error || "Error al iniciar sesión ❌");
+        throw new Error(data.error || "Error al iniciar sesión");
       }
-    } catch (err) {
-      console.error("Error during login:", err);
-      setError("Error de conexión con el servidor");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="text-center mt-5">
+    <>
       {location.state?.message && (
-        <div className="alert alert-warning mt-3">
-          {location.state.message}
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1000,
+          maxWidth: '400px',
+          width: '90%'
+        }}>
+          <div className="alert-custom alert-success-custom">
+            {location.state.message}
+          </div>
         </div>
       )}
-
-      <h1>Página de Login</h1>
-      <p className="lead">Aquí puedes loguearte.</p>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handlerLogin();
-        }}
-        className="w-50 mx-auto"
-      >
-        <div className="form-group mb-3">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setError(null);
-            }}
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setError(null);
-            }}
-          />
-        </div>
-
-        <button type="submit" className="btn btn-warning" disabled={loading}>
-          {loading ? "Ingresando..." : "Iniciar Sesión"}
-        </button>
-      </form>
-
-      {error && <div className="alert alert-danger mt-3">{error}</div>}
-    </div>
+      <AuthForm
+        title="Iniciar Sesión"
+        subtitle="Ingresa a tu cuenta para continuar"
+        submitLabel="Iniciar Sesión"
+        onSubmit={handleLogin}
+        loading={loading}
+        showForgotPassword={true}
+        footerText="¿No tienes cuenta?"
+        footerLink="/register"
+        footerLinkText="Regístrate aquí"
+      />
+    </>
   );
 };
 

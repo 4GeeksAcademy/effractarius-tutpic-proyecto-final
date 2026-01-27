@@ -40,44 +40,55 @@ export const Home = () => {
   const token = localStorage.getItem("access_token");
 
   return (
-    <div className="text-center mt-5">
-      <h1 className="display-4">Bienvenido</h1>
-      <p className="lead">
-        <img src={logoImageUrl} className="w-25 square-img" alt="Effractarius Logo" />
-      </p>
-      <div className="d-flex justify-content-center gap-3 mt-3">
-        <button className="btn btn-warning" onClick={() => navigate("/register")}>
-          Ir a Registro
-        </button>
-        <button className="btn btn-warning" onClick={() => navigate("/login")}>
-          Ir a Login
-        </button>
-        {token && (
-          <button className="btn btn-warning" onClick={() => navigate("/dashboard")}>
-            Ir a Dashboard
-          </button>
-        )}
-      </div>
-      {location.state?.message && (
-        <div className="alert alert-success mt-3">
-          {location.state.message}
-        </div>
-      )}
+    <div className="home-container">
+      <div className="home-card">
+        <h1 className="home-title">Bienvenido a Let's Cook</h1>
 
-      {error && (
-        <div className="alert alert-danger mt-3">
-          {error}
-        </div>
-      )}
+        <img src={logoImageUrl} className="home-logo" alt="Let's Cook Logo" />
 
-      <div className="alert alert-info mt-3">
-        {loading ? (
-          <span className="text-danger">
-            Loading message from the backend (make sure your Python 🐍 backend is running)...
-          </span>
-        ) : (
-          <span>{store?.message}</span>
+        {location.state?.message && (
+          <div className="alert-custom alert-success-custom">
+            {location.state.message}
+          </div>
         )}
+
+        {error && (
+          <div className="alert-custom alert-error-custom">
+            {error}
+          </div>
+        )}
+
+        {!loading && store?.message && (
+          <p style={{ color: '#636e72', fontSize: '15px', marginTop: '16px' }}>
+            {store.message}
+          </p>
+        )}
+
+        <div className="home-buttons">
+          {!token ? (
+            <>
+              <button
+                className="btn-orange-primary"
+                onClick={() => navigate("/register")}
+              >
+                Crear Cuenta
+              </button>
+              <button
+                className="btn-orange-secondary"
+                onClick={() => navigate("/login")}
+              >
+                Iniciar Sesión
+              </button>
+            </>
+          ) : (
+            <button
+              className="btn-orange-primary"
+              onClick={() => navigate("/dashboard")}
+            >
+              Ir al Dashboard
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

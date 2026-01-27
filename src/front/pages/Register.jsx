@@ -1,90 +1,123 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   useEffect(() => {
-      document.title = "Register | Let's Cook!";
-    }, []);
-  const [username, setUsername] = useState(""); 
+    document.title = "Registro | Let's Cook!";
+  }, []);
+
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handlerRegister = async () => {
+  const handlerRegister = async (e) => {
+    e.preventDefault();
     try {
       setLoading(true);
+      setError(null);
       const response = await fetch(
-        "https://turbo-space-trout-5gpx5v4q5qqv2p4gv-3001.app.github.dev/api/create_user", // adjust to your backend URL
+        `${import.meta.env.VITE_BACKEND_URL}/api/create_user`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ "username": username, "email": email, "password": password }), // ✅ aligned with backend
+          body: JSON.stringify({ username, email, password }),
         }
       );
 
       const data = await response.json();
-      console.log("Data", data);
+
       if (response.ok) {
-        alert("Usuario creado exitosamente ✅");
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setError(null);
+        navigate("/login", { state: { message: "Usuario creado exitosamente. Por favor inicia sesión." } });
       } else {
-        setError(data.error || "Error al crear usuario ❌");
+        setError(data.error || "Error al crear usuario");
       }
     } catch (err) {
       console.error("Error durante registro:", err);
-      setError("Error de conexión con el servidor ❌");
+      setError("Error de conexión con el servidor");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handlerRegister();
-      }}
-      className="w-50 mx-auto"
-    >
-      <div className="form-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Nombre de usuario"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1 className="auth-title">Crear Cuenta</h1>
+        <p className="auth-subtitle">Regístrate para comenzar tu aventura culinaria</p>
+
+        <form onSubmit={handlerRegister}>
+          <div className="form-group-custom">
+            <label htmlFor="username" className="form-label-custom">
+              Nombre de usuario
+            </label>
+            <input
+              type="text"
+              id="username"
+              className="form-input-custom"
+              placeholder="Tu nombre de usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group-custom">
+            <label htmlFor="email" className="form-label-custom">
+              Correo electrónico
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="form-input-custom"
+              placeholder="tu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="username"
+            />
+          </div>
+
+          <div className="form-group-custom">
+            <label htmlFor="password" className="form-label-custom">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="form-input-custom"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="new-password"
+            />
+          </div>
+
+          <button type="submit" className="btn-orange-primary" disabled={loading}>
+            {loading ? "Creando cuenta..." : "Crear Cuenta"}
+          </button>
+        </form>
+
+        {error && (
+          <div className="alert-custom alert-error-custom">
+            {error}
+          </div>
+        )}
+
+        <div style={{ textAlign: 'center', marginTop: '24px', color: '#636e72', fontSize: '14px' }}>
+          ¿Ya tienes cuenta?{' '}
+          <a href="#" onClick={(e) => {
+            e.preventDefault();
+            navigate("/login");
+          }} className="link-orange">
+            Inicia sesión aquí
+          </a>
+        </div>
       </div>
-
-      <div className="form-group mb-3">
-        <input
-          type="email"
-          className="form-control"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-
-      <div className="form-group mb-3">
-        <input
-          type="password"
-          className="form-control"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-
-      <button type="submit" className="btn btn-primary" disabled={loading}>
-        {loading ? "Registrando..." : "Registrarse"}
-      </button>
-
-      {error && <div className="alert alert-danger mt-3">{error}</div>}
-    </form>
+    </div>
   );
 };
 

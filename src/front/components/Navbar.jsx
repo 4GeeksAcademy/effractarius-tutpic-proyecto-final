@@ -17,7 +17,10 @@ export const Navbar = () => {
 					</p>Ir a HOME</button>
 				</Link>
 
-				<div className="ml-auto">
+				<div className="ml-auto d-flex gap-2">
+					<Link to="/blog">
+						<button className="btn btn-primary">Blog</button>
+					</Link>
 					<Link to="/demo">
 						<button className="btn btn-warning">Check the Context in action</button>
 					</Link>

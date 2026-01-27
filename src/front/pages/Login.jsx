@@ -4,7 +4,7 @@ import AuthForm from "./AuthForm";
 
 const Login = () => {
   useEffect(() => {
-    document.title = "Login | Let's Cook!";
+    document.title = "Iniciar Sesión | Let's Cook!";
   }, []);
 
   const navigate = useNavigate();
@@ -34,9 +34,9 @@ const Login = () => {
 
       if (response.ok) {
         localStorage.setItem("access_token", data.access_token);
-        navigate("/dashboard", { state: { message: "Login exitoso ✅" } });
+        navigate("/dashboard", { state: { message: "Sesión iniciada exitosamente" } });
       } else {
-        throw new Error(data.error || "Error al iniciar sesión ❌");
+        throw new Error(data.error || "Error al iniciar sesión");
       }
     } finally {
       setLoading(false);
@@ -46,16 +46,30 @@ const Login = () => {
   return (
     <>
       {location.state?.message && (
-        <div className="alert alert-warning mt-3 text-center">
-          {location.state.message}
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1000,
+          maxWidth: '400px',
+          width: '90%'
+        }}>
+          <div className="alert-custom alert-success-custom">
+            {location.state.message}
+          </div>
         </div>
       )}
       <AuthForm
-        title="Página de Login"
-        subtitle="Aquí puedes loguearte."
+        title="Iniciar Sesión"
+        subtitle="Ingresa a tu cuenta para continuar"
         submitLabel="Iniciar Sesión"
         onSubmit={handleLogin}
         loading={loading}
+        showForgotPassword={true}
+        footerText="¿No tienes cuenta?"
+        footerLink="/register"
+        footerLinkText="Regístrate aquí"
       />
     </>
   );

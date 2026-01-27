@@ -1,5 +1,5 @@
 """
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
+Este módulo se encarga de iniciar el servidor API, cargar la BD y agregar los endpoints
 """
 from flask import Flask, request, jsonify, Blueprint
 from api.models import db, User
@@ -11,7 +11,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 
 api = Blueprint('api', __name__)
 
-# Allow CORS requests to this API
+# Permitir solicitudes CORS a esta API
 CORS(api)
 bcrypt = Bcrypt()
 jwt = JWTManager()
@@ -92,51 +92,23 @@ def restringido():
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     return jsonify({"user": user.serialize()}), 200
-@api.route('/create_user', methods=['POST'])
-def create_user():
 
-    #recuperar data entrante del json
-    data = request.get_json()
-    
-    #verificar si tiene informacion la data
-    if not data:
-        return jsonify({"msg": "No mandaste data, presta atencion"}), 400
-    
-    #recuperar la variable
-    name = data.get("name")
-    email = data.get("email")
-    password = data.get("password") 
-    is_active = data.get("is_active", True)
 
-    #verificar si las variables tienen contenido
-    if not name or not email or not password:
-        return jsonify({"msg": "Faltan datos importantes"}), 400
-    
-    #confirmar si este usuario existe en la base de datos buscando por email
-    existing_user = User.query.filter_by(email=email).first()
-        
-    #si existe retornar un error y si no continuar con la creacion
-    if existing_user:
-        return jsonify({"msg": "El usuario ya existe"}), 400
-    
-    #hashear la contraseña
-    passhash = bcrypt.generate_password_hash(password).decode('utf-8')
+@api.route('/reset-password', methods=['POST'])
+def reset_password():
+    try:
+        data = request.get_json()
+        email = data.get("email")
 
-    #crear el usuario
-    new_user = User(
-        username=name,
-        email=email,
-        password=passhash, 
-        is_active=is_active,
-        is_admin=False,
-        is_premium=False
-        )
+        if not email:
+            return jsonify({"error": "El correo electrónico es obligatorio"}), 400
 
-    #anexar el usuario a la base de datos
-    db.session.add(new_user)
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"message": "Si el correo existe, recibirás instrucciones"}), 200
 
-    #comitiar la sesion
-    db.session.commit()
+        return jsonify({"message": "Si el correo existe, recibirás instrucciones"}), 200
 
-    #retornar una respuesta de exito con el usuario creado
-    return jsonify({"msg": "Usuario creado exitosamente", "nuevo_usuario": new_user.serialize()}), 201
+    except Exception as e:
+        print(f"Error en reset-password: {e}")
+        return jsonify({"error": "Error interno del servidor"}), 500

@@ -4,18 +4,18 @@ import { Navigate, Outlet } from "react-router-dom";
 const ProtectedRoute = () => {
   const token = localStorage.getItem("access_token");
 
-  // If no token, redirect to login
+  // Si no hay token, redirigir al login
   if (!token) {
     return (
       <Navigate
         to="/login"
         replace
-        state={{ message: "Por favor inicia sesión primero ❌" }}
+        state={{ message: "Por favor inicia sesión primero" }}
       />
     );
   }
 
-  // Otherwise, render the child route
+  // De lo contrario, renderizar la ruta hija
   return <Outlet />;
 };
 

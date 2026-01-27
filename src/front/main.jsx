@@ -7,7 +7,7 @@ import { StoreProvider } from './hooks/useGlobalReducer';
 import { BackendURL } from './components/BackendURL';
 
 const Main = () => {
-  // If backend URL is not set, show configuration screen
+  // Si la URL del backend no está configurada, mostrar pantalla de configuración
   if (!import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL === "") {
     return (
       <React.StrictMode>
@@ -16,7 +16,7 @@ const Main = () => {
     );
   }
 
-  // Otherwise, render the app with global state + router
+  // De lo contrario, renderizar la app con estado global + router
   return (
     <React.StrictMode>
       <StoreProvider>
@@ -26,5 +26,5 @@ const Main = () => {
   );
 };
 
-// Mount the app
+// Montar la aplicación
 ReactDOM.createRoot(document.getElementById('root')).render(<Main />);
